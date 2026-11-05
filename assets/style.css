@@ -160,3 +160,64 @@ small {
         display: block
     }
 }
+
+/* ---- PHPLab02: View / Edit ---- */
+td .btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    margin-right: 4px
+}
+
+.btn-edit {
+    background: #e8a317;
+    color: #1f2937
+}
+
+.btn-light {
+    background: #e8f0fb;
+    color: #1d4c83;
+    border: 1px solid #c9d8ee
+}
+
+.detail {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 10px 16px;
+    margin: 0
+}
+
+.detail dt {
+    font-weight: 700
+}
+
+.detail dd {
+    margin: 0
+}
+
+.badge {
+    background: #e1f1e8;
+    color: #276749;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block
+}
+
+.actions {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #dce5f0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap
+}
+
+input[readonly] {
+    background: #f1f5f9;
+    color: #475569
+}
+
+.dark input[readonly] {
+    background: #1c355c;
+    color: #cbd5e1
+}

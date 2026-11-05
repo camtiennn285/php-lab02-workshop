@@ -38,9 +38,12 @@ unset($_SESSION['flash']);
 <th>Workshop</th>
 <th>Qty</th>
 <th>Amount</th>
+<th>Actions</th>
 </tr>
 </thead>
 <tbody>
+
+
 <?php foreach ($bookings as $b): ?>
 <tr>
 <td>
@@ -61,6 +64,10 @@ unset($_SESSION['flash']);
 </td>
 <td>
 <?= number_format($b['amount']) ?> VND</td>
+<td>
+  <a class="btn" href="booking_detail.php?ref=<?= urlencode($b['ref']) ?>">View Details</a>
+  <a class="btn btn-edit" href="booking_edit.php?ref=<?= urlencode($b['ref']) ?>">Edit</a>
+</td>
 </tr>
 <?php endforeach; ?>
 </tbody>
