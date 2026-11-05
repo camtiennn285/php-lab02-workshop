@@ -45,3 +45,37 @@ function csrf_valid(array $post): bool {
     return is_string($post['csrf_token'] ?? null)
         && hash_equals($_SESSION['csrf_token'] ?? '', $post['csrf_token']);
 }
+
+/**
+ * Tìm vị trí (index) của booking có mã $ref trong Session.
+ * Trả về số index nếu thấy, trả về null nếu không thấy.
+ */
+function find_booking_index(string $ref): ?int {
+    foreach ($_SESSION['bookings'] as $i => $b) {
+        if (($b['ref'] ?? '') === $ref) {
+            return $i;
+        }
+    }
+    return null;
+}
+ 
+/**
+ * Tìm workshop trong catalog theo tên (title). Trả về null nếu không thấy.
+ */
+function find_workshop_by_title(array $workshops, string $title): ?array {
+    foreach ($workshops as $w) {
+        if ($w['title'] === $title) {
+            return $w;
+        }
+    }
+    return null;
+}
+ 
+/**
+ * Lấy một giá trị CHUỖI từ $_GET / $_POST. Thiếu key hoặc không phải chuỗi
+ * (ví dụ ?ref[]=x là mảng) thì trả về chuỗi rỗng, không gây Warning.
+ */
+function input_string(array $source, string $key): string {
+    $value = $source[$key] ?? '';
+    return is_string($value) ? $value : '';
+}
