@@ -1,9 +1,21 @@
 <?php
 require __DIR__ . '/lib/bootstrap.php';
  
-// Lấy ref từ URL và tìm booking trong Session
-$ref     = input_string($_GET, 'ref');
-$index   = find_booking_index($ref);
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+if ($method !== 'GET' && $method !== 'POST') {
+    http_response_code(405);
+    exit('Method not allowed');
+}
+ 
+// POST thì phải có CSRF token đúng, nếu không dừng ngay
+if ($method === 'POST' && !csrf_valid($_POST)) {
+    http_response_code(403);
+    exit('Invalid CSRF token. Please reload the form and try again.');
+}
+ 
+// Lấy ref: lúc mở trang đến từ URL (GET), lúc lưu đến từ ô hidden (POST)
+$ref   = input_string($method === 'POST' ? $_POST : $_GET, 'ref');
+$index = find_booking_index($ref);
 $booking = ($index !== null) ? $_SESSION['bookings'][$index] : null;
  
 if ($booking === null) {
@@ -13,13 +25,32 @@ if ($booking === null) {
 // Workshop và đơn giá luôn lấy từ catalog trên server
 $workshop = $booking ? find_workshop_by_title($workshops, (string)$booking['workshop']) : null;
  
-// Dữ liệu điền sẵn vào form + chưa có lỗi nào
 $errors = [];
 $old = $booking ? [
     'full_name' => $booking['full_name'],
     'email'     => $booking['email'],
     'quantity'  => $booking['quantity'],
 ] : [];
+ 
+// Xử lý lưu (chỉ khi POST + tìm thấy booking + tìm thấy workshop)
+if ($method === 'POST' && $booking !== null && $workshop !== null) {
+    $result = validate_booking([
+        'full_name'   => input_string($_POST, 'full_name'),
+        'email'       => input_string($_POST, 'email'),
+        'quantity'    => input_string($_POST, 'quantity'),
+        'workshop_id' => $workshop['id'],      // từ catalog, KHÔNG lấy từ form
+    ], $workshops);
+ 
+    $errors = $result['errors'];
+    $old    = $result['data'];
+ 
+    if ($errors) {
+        // Giữ nguyên chuỗi người dùng đã gõ ở ô Tickets để họ thấy mình nhập sai gì
+        $old['quantity'] = input_string($_POST, 'quantity');
+    } else {
+        // TODO (Task 14): cập nhật Session + tính lại amount + redirect
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
