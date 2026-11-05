@@ -48,7 +48,15 @@ if ($method === 'POST' && $booking !== null && $workshop !== null) {
         // Giữ nguyên chuỗi người dùng đã gõ ở ô Tickets để họ thấy mình nhập sai gì
         $old['quantity'] = input_string($_POST, 'quantity');
     } else {
-        // TODO (Task 14): cập nhật Session + tính lại amount + redirect
+        // Chỉ cập nhật đúng booking tại $index
+        $_SESSION['bookings'][$index]['full_name'] = $old['full_name'];
+        $_SESSION['bookings'][$index]['email']     = $old['email'];
+        $_SESSION['bookings'][$index]['quantity']  = $old['quantity'];
+        // Tính lại tiền từ đơn giá catalog × số vé đã validate
+        $_SESSION['bookings'][$index]['amount']    = $workshop['fee'] * $old['quantity'];
+ 
+        $_SESSION['flash'] = 'Booking updated successfully.';
+        redirect_to('dashboard.php');          // 303 + exit
     }
 }
 ?>
